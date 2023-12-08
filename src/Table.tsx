@@ -3,6 +3,7 @@ import { City, dayWeather } from "./makeData";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext } from "@tanstack/react-table";
 import './index.css'
 import { conditions } from "./const";
+import { useThrottle } from "@uidotdev/usehooks";
 
 interface Props {
     data: City[];
@@ -17,7 +18,6 @@ const columnHelper = createColumnHelper<any>()
 function Table(props : Props) {
     const { data } = props;
     // const [prevData, setPrevData] = React.useState<WeatherData[]>([]);
-    console.log('data', data)
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
         data.forEach((city, index) => {
@@ -129,8 +129,9 @@ function Table(props : Props) {
         })
     }, []);
 
+    console.log('formattedData', formattedData)
     const table = useReactTable({
-        data: formattedData,
+        data: useThrottle(formattedData, 3000),
         columns,
         getCoreRowModel: getCoreRowModel(),
     })

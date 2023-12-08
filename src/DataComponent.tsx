@@ -5,13 +5,13 @@ import { City } from './makeData'
 
 interface Props {
     // mergedDataRef: react.MutableRefObject<City[]>,
-    tableData: City[],
-    setTableData: react.Dispatch<react.SetStateAction<City[]>>
+    mergedData: City[],
+    setMergedData: react.Dispatch<react.SetStateAction<City[]>>
 }
 
 export default function DataComponent(props : Props) {
     const data = useEndpointData() // this is just for trigger the useEffect
-    const { tableData, setTableData } = props;
+    const { mergedData, setMergedData } = props;
     const { connData } = useSocketData()
     const [backgroundColor, setBackgroundColor] = useState('')
     const [mergeDataTime, setMergeDataTime] = useState(0)
@@ -24,31 +24,6 @@ export default function DataComponent(props : Props) {
             }, 1000)
         }
     }, [data,connData])
-
-    // console.log('connData', connData)
-
-    // function mergeData (data: City[], connData: City[] | null) {
-    //     if(!connData) return data;
-
-    //     const dataMap = new Map(data.map(city => [city.name, city]));
-
-    //     const newData = connData.map((country) => {
-    //         const countryInData = dataMap.get(country.name);
-    //         if (countryInData) {
-    //             const weatherMap = new Map(countryInData.weather.map(dayWeather => [dayWeather.day, dayWeather]));
-    //             country.weather.forEach(dayWeather => {
-    //                 if (weatherMap.has(dayWeather.day)) {
-    //                     weatherMap.set(dayWeather.day, dayWeather);
-    //                 }
-    //             });
-    //             return {...countryInData, weather: Array.from(weatherMap.values())};
-    //         }
-    //         return country;
-    //     });
-
-    //     return newData;
-    // }
-
     // const mergedData = mergeData(mergedDataRef.current, connData)
     // console.log('mergedData', mergedData)
     // mergedDataRef.current = mergedData
@@ -57,7 +32,7 @@ export default function DataComponent(props : Props) {
     useEffect(() => {
         if(!connData) return;
         const startTime = performance.now();
-        const dataMap = new Map(tableData.map(city => [city.name, city]));
+        const dataMap = new Map(mergedData.map(city => [city.name, city]));
         const newData = connData.map((country) => {
             const countryInData = dataMap.get(country.name);
             if (countryInData) {
@@ -71,7 +46,7 @@ export default function DataComponent(props : Props) {
             }
             return country;
         });
-        setTableData(newData)
+        setMergedData(newData)
         const endTime = performance.now();
         const time = endTime - startTime;
         setMergeDataTime(time);
