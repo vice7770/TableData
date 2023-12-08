@@ -6,28 +6,27 @@ import Table from './Table'
 import { City } from './makeData'
 import useEndpointData from './useEndpointData'
 function App() {
-  const [tableData, setTableData] = useState<City[]>([])
+  const [tableData, setTableData] = useState<City[]>(useEndpointData())
   // const [mergedData, setMergedData] = useState<City[]>([])
   const mergedDataRef = useRef<City[]>(useEndpointData());
   const [intervalValue, setIntervalValue] = useState<number | null>(1000);
   
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-        setTableData(mergedDataRef.current);
-    }, intervalValue || 3000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //       setTableData(mergedDataRef.current);
+  //   }, intervalValue || 3000);
 
-    return () => {
-        clearInterval(intervalId);
-    };
-  }, [intervalValue, setIntervalValue]);
+  //   return () => {
+  //       clearInterval(intervalId);
+  //   };
+  // }, [intervalValue, setIntervalValue]);
 
 
   return (
-    
     <div className=''>
       <ServerDataComponent />
       <br/>
-      <DataComponent mergedDataRef={mergedDataRef}/>
+      <DataComponent tableData={tableData} setTableData={setTableData}/>
       <br/>
       <Table data={tableData}/>
     </div>

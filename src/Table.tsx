@@ -17,7 +17,7 @@ const columnHelper = createColumnHelper<any>()
 function Table(props : Props) {
     const { data } = props;
     // const [prevData, setPrevData] = React.useState<WeatherData[]>([]);
-    // console.log('data', data)
+    console.log('data', data)
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
         data.forEach((city, index) => {
@@ -35,7 +35,6 @@ function Table(props : Props) {
                 }
             });
         });
-        console.log('data', result)
         return result;
     }, [data]);
 
@@ -135,14 +134,6 @@ function Table(props : Props) {
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
-
-    // useEffect(() => {
-    //     // Perform your action here
-    //     console.log('Table has been rendered');
-    //     setPrevData(formattedData);
-    // }); // Add 'table' to the dependency array
-    
-    console.log('table', table)
 
     return (
         <div className="flex flex-col p-2">
