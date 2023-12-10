@@ -128,7 +128,7 @@ function Table(props : Props) {
         })
     }, []);
 
-    console.log('formattedData', formattedData)
+    // console.log('formattedData', formattedData)
     const table = useReactTable({
         data: formattedData,
         columns,

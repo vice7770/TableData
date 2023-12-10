@@ -1,19 +1,16 @@
 import react, { useEffect, useState } from 'react'
-import useEndpointData from './useEndpointData'
-import useSocketData from './useSocketData'
 import { City } from './makeData'
 
 interface Props {
-    // mergedDataRef: react.MutableRefObject<City[]>,
+    data: City[],
+    connData: City[] | null,
     mergedData: City[],
     setMergedData: react.Dispatch<react.SetStateAction<City[]>>,
     throttledDataRef: react.MutableRefObject<number>
 }
 
 export default function DataComponent(props : Props) {
-    const { data } = useEndpointData() // this is just for trigger the useEffect
-    const { mergedData, setMergedData, throttledDataRef } = props;
-    const { connData } = useSocketData()
+    const { data, connData, mergedData, setMergedData, throttledDataRef } = props;
     const [backgroundColor, setBackgroundColor] = useState('')
     const [mergeDataTime, setMergeDataTime] = useState(0)
 
@@ -57,11 +54,11 @@ export default function DataComponent(props : Props) {
                     Data
                 </h3>
                 <span className='text-xl ml-4'>
-                    {mergeDataTime.toFixed(4)} ms
+                    {mergeDataTime.toFixed(5)} ms
                 </span>
             </div>
             <label className='text-xl ml-4'>Throttle</label>
-            <input type="number" name='throttle' className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={throttledDataRef.current} onChange={(e) => throttledDataRef.current = parseInt(e.target.value, 10)}/>
+            <input type="number" name='throttle' className="ml-4 p-1 border-2 border-gray-300 rounded text-center" min="0" defaultValue={throttledDataRef.current} onChange={(e) => throttledDataRef.current = parseInt(e.target.value, 10)}/>
         </div>
     )
 }

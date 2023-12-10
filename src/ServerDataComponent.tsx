@@ -1,10 +1,15 @@
-import react, { useEffect, useRef, useState } from 'react'
-import useEndpointData from './useEndpointData'
-import useSocketData from './useSocketData'
+import react, { useEffect, useState } from 'react'
+import { City } from './makeData'
 
-export default function ServerDataComponent() {
-    const { data, numberOfRowsRef }  = useEndpointData()
-    const { connData } = useSocketData()
+interface Props {
+    data: City[],
+    connData: City[] | null,
+    rowsToGenerate: number,
+    setRowsToGenerate: react.Dispatch<react.SetStateAction<number>>,
+}
+
+export default function ServerDataComponent( props : Props) {
+    const { data, connData, rowsToGenerate, setRowsToGenerate } = props;
     const [backgroundColor, setBackgroundColor] = useState('')
     const [backgroundColorConn, setBackgroundColorConn] = useState('')
     useEffect(() => {
@@ -32,7 +37,7 @@ export default function ServerDataComponent() {
             </div>
             <div className='flex flex-col items-center'>
                 <label className='text-xl ml-4'>Number of Rows</label>
-                <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={numberOfRowsRef.current} onChange={(e) => numberOfRowsRef.current = parseInt(e.target.value, 10)}/>
+                <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerate} onChange={(e) => setRowsToGenerate(parseInt(e.target.value))}/>
             </div>
             <div className='flex items-center justify-center border-2 border-red-100 w-1/3 m-10 gap-3'>
                 <div className='flex items-center justify-center border-2 border-red-100 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColor}}>

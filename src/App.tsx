@@ -6,21 +6,21 @@ import Table from './Table'
 import { City } from './makeData'
 import useEndpointData from './useEndpointData'
 import { useThrottle } from '@uidotdev/usehooks'
-import { da } from '@faker-js/faker'
+import useSocketData from './useSocketData'
 
 function App() {
   const { data } = useEndpointData()
+  const { connData, rowsToGenerate, setRowsToGenerate} = useSocketData()
   const [tableData, setTableData] = useState<City[]>([])
   const [mergedData, setMergedData] = useState<City[]>(data)
   const throttledDataRef = useRef<number>(3)
   const throttledData = useThrottle(mergedData, throttledDataRef.current * 1000)
 
-
   return (
     <div className=''>
-      <ServerDataComponent />
+      <ServerDataComponent data={data} connData={connData} rowsToGenerate={rowsToGenerate} setRowsToGenerate={setRowsToGenerate}/>
       <br/>
-      <DataComponent mergedData={mergedData} setMergedData={setMergedData} throttledDataRef={throttledDataRef}/>
+      <DataComponent data={data} connData={connData} mergedData={mergedData} setMergedData={setMergedData} throttledDataRef={throttledDataRef}/>
       <br/>
       <Table data={throttledData}/>
     </div>
