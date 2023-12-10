@@ -1,6 +1,6 @@
 import react, { useEffect, useState } from 'react'
 import { City } from './makeData'
-import { useDebounce } from "@uidotdev/usehooks";
+import { useDebounce, useThrottle } from "@uidotdev/usehooks";
 
 interface Props {
     data: City[],
@@ -38,6 +38,8 @@ export default function ServerDataComponent( props : Props) {
         }
     }, [data])
 
+    const throttledConnData = useThrottle(connData, 100);
+
     useEffect(() => {
         if (connData) {
             setBackgroundColorConn('red')
@@ -45,7 +47,7 @@ export default function ServerDataComponent( props : Props) {
                 setBackgroundColorConn('')
             }, 1000)
         }
-    }, [connData])
+    }, [throttledConnData])
 
     useEffect(() => {
         setTotalRowsToGenerate(debouncedValue);
@@ -53,7 +55,7 @@ export default function ServerDataComponent( props : Props) {
 
     return (
         <div className='flex flex-col items-center justify-center'>
-            <div className='flex flex-col items-center '>
+            <div className='flex flex-col items-center mb-7'>
                 <h1 className='text-5xl'>Server Data</h1>
             </div>
             <div className='flex flex-row gap-8'>

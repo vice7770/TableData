@@ -1,5 +1,6 @@
 import react, { useEffect, useState } from 'react'
 import { City } from './makeData'
+import { useThrottle } from '@uidotdev/usehooks';
 
 interface Props {
     data: City[],
@@ -14,19 +15,20 @@ export default function DataComponent(props : Props) {
     const [backgroundColor, setBackgroundColor] = useState('')
     const [mergeDataTime, setMergeDataTime] = useState(0)
 
+    const throttledConnData = useThrottle(connData, 100);
+    
     useEffect(() => {
-        if (data || connData) { 
+        if (data || throttledConnData) { 
             setBackgroundColor('red')
             setTimeout(() => {
                 setBackgroundColor('')
             }, 1000)
         }
-    }, [data,connData])
+    }, [data,throttledConnData])
 
     //Merge server data with socket data
     useEffect(() => {
         if(!connData) return;
-        console.log('merging data', connData)
         const startTime = performance.now();
         const dataMap = new Map(mergedData.map(city => [city.name, city]));
         const newData = connData.map((country) => {

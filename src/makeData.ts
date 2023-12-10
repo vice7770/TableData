@@ -35,7 +35,6 @@ const newWeatherForCity = (d : number): dayWeather => {
 
 export function makeRandomData(cities: string[], lens: number): City[] {
     // Create a pool of possible values for `d`
-    
     const citiesWeather = cities.map((city) => {
         const dPool = range(100);
         const cityName = city
@@ -51,7 +50,6 @@ export function makeRandomData(cities: string[], lens: number): City[] {
             weather: weatherData,
         }
     })
-
     return citiesWeather
 }
 
