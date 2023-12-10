@@ -6,7 +6,7 @@ import {countries} from "./const";
 function useSocketData() {
     const [connData, setConnData] = useState<City[] | null>(null);
     const [intervalValue, setIntervalValue] = useState<number | null>(1000);
-    const [numberOfDataPoints, setNumberOfDataPoints] = useState<number>(80);
+    const [numberOfDataPoints, setNumberOfDataPoints] = useState<number>(10);
 
     useEffect(() => {
         const intervalId = setInterval(() => {

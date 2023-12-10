@@ -17,7 +17,6 @@ const columnHelper = createColumnHelper<any>()
 
 function Table(props : Props) {
     const { data } = props;
-    // const [prevData, setPrevData] = React.useState<WeatherData[]>([]);
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
         data.forEach((city, index) => {
@@ -37,7 +36,7 @@ function Table(props : Props) {
         });
         return result;
     }, [data]);
-
+    
     const cellFormatter = (info : CellContext<any, any>) => {
         const getBackgroundColor = (columnId: string, value: number) => {
             if (columnId.includes('humidity')) {
@@ -131,7 +130,7 @@ function Table(props : Props) {
 
     console.log('formattedData', formattedData)
     const table = useReactTable({
-        data: useThrottle(formattedData, 3000),
+        data: formattedData,
         columns,
         getCoreRowModel: getCoreRowModel(),
     })

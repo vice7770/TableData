@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { makeData } from "./makeData";
 import {countries} from "./const";
 
 function useEndpointData() {
-    const [data] = useState(() => makeData(countries, 100))
-    return data;
+    const numberOfRowsRef = useRef<number>(100)
+    const [data] = useState(() => makeData(countries, numberOfRowsRef.current))
+    return {data, numberOfRowsRef};
 }
 
 export default useEndpointData;
