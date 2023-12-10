@@ -1,5 +1,6 @@
 import react, { useEffect, useState } from 'react'
 import { City } from './makeData'
+import { useDebounce } from "@uidotdev/usehooks";
 
 interface Props {
     data: City[],
@@ -7,13 +8,27 @@ interface Props {
     rowsToGenerate: number,
     setRowsToGenerate: react.Dispatch<react.SetStateAction<number>>,
     intervalValue: number,
-    setIntervalValue: react.Dispatch<react.SetStateAction<number>>
+    setIntervalValue: react.Dispatch<react.SetStateAction<number>>,
+    totalRowsToGenerate: number,
+    setTotalRowsToGenerate: react.Dispatch<react.SetStateAction<number>>
 }
 
 export default function ServerDataComponent( props : Props) {
-    const { data, connData, rowsToGenerate, setRowsToGenerate, intervalValue, setIntervalValue } = props;
+    const {
+      data,
+      connData,
+      rowsToGenerate,
+      setRowsToGenerate,
+      intervalValue,
+      setIntervalValue,
+      totalRowsToGenerate,
+      setTotalRowsToGenerate,
+    } = props;
     const [backgroundColor, setBackgroundColor] = useState('')
     const [backgroundColorConn, setBackgroundColorConn] = useState('')
+    const [rowsToGenerateInput, setRowsToGenerateInput] = useState(totalRowsToGenerate);
+    const debouncedValue = useDebounce(rowsToGenerateInput, 300);
+    
     useEffect(() => {
         if (data) {
             setBackgroundColor('red')
@@ -32,14 +47,22 @@ export default function ServerDataComponent( props : Props) {
         }
     }, [connData])
 
+    useEffect(() => {
+        setTotalRowsToGenerate(debouncedValue);
+    }, [debouncedValue]);
+
     return (
         <div className='flex flex-col items-center justify-center'>
-            <div className='flex flex-col items-center m-6'>
+            <div className='flex flex-col items-center '>
                 <h1 className='text-5xl'>Server Data</h1>
             </div>
             <div className='flex flex-row gap-8'>
-                <div className='flex flex-col'>
+            <div className='flex flex-col'>
                     <label className='text-xl mb-2'>Number of Rows</label>
+                    <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerateInput} onChange={(e) => setRowsToGenerateInput(parseInt(e.target.value))}/>
+                </div>
+                <div className='flex flex-col'>
+                    <label className='text-xl mb-2'>Number of Rows from Socket</label>
                     <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerate} onChange={(e) => setRowsToGenerate(parseInt(e.target.value))}/>
                 </div>
                 <div className='flex flex-col'>

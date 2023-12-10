@@ -3,7 +3,6 @@ import { City, dayWeather } from "./makeData";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext } from "@tanstack/react-table";
 import './index.css'
 import { conditions } from "./const";
-import { useThrottle } from "@uidotdev/usehooks";
 
 interface Props {
     data: City[];

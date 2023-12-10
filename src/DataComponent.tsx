@@ -49,7 +49,7 @@ export default function DataComponent(props : Props) {
     }, [connData])
 
     return (
-        <div className='flex flex-row items-center justify-center mb-10'>
+        <div className='flex flex-row items-center justify-center mb-2'>
             <div className='flex items-center justify-center border-2 border-red-100 w-1/3 gap-3' style={{backgroundColor: backgroundColor}}>
                 <h3 className='text-2xl'>
                     Data

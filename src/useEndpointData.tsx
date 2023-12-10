@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { makeData } from "./makeData";
 import {countries} from "./const";
 
@@ -7,10 +7,13 @@ import {countries} from "./const";
 // }
 
 function useEndpointData() {
-    // const { rowsToGenerateRef = 100 } = props;
-    // const numberOfRowsRef = useRef<number>(100)
-    const [data] = useState(() => makeData(countries, 100))
-    return {data};
+    const [totalRowsToGenerate, setTotalRowsToGenerate] = useState<number>(100);
+    const [data, setData] = useState(() => makeData(countries, totalRowsToGenerate))
+    useEffect(() => {
+        const newData = makeData(countries, totalRowsToGenerate)
+        setData(newData)
+    },[totalRowsToGenerate])
+    return {data, totalRowsToGenerate, setTotalRowsToGenerate};
 }
 
 export default useEndpointData;
