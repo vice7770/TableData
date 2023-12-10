@@ -5,7 +5,7 @@ import {countries} from "./const";
 
 function useSocketData() {
     const [connData, setConnData] = useState<City[] | null>(null);
-    const [intervalValue, setIntervalValue] = useState<number | null>(1000);
+    const [intervalValue, setIntervalValue] = useState<number>(1000);
     // const [numberOfDataPoints, setNumberOfDataPoints] = useState<number>(10);
     const [rowsToGenerate, setRowsToGenerate] = useState<number>(10);
 
@@ -13,14 +13,14 @@ function useSocketData() {
         const intervalId = setInterval(() => {
             const data = makeRandomData(countries, rowsToGenerate);
             setConnData(data);
-        }, intervalValue || 3000);
+        }, intervalValue);
 
         return () => {
             clearInterval(intervalId);
         };
     }, [intervalValue, rowsToGenerate]);
 
-    return { connData, intervalValue, setInterval: setIntervalValue, rowsToGenerate, setRowsToGenerate};
+    return { connData, intervalValue, setIntervalValue, rowsToGenerate, setRowsToGenerate};
 }
 
 export default useSocketData;

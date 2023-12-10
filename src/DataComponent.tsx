@@ -26,6 +26,7 @@ export default function DataComponent(props : Props) {
     //Merge server data with socket data
     useEffect(() => {
         if(!connData) return;
+        console.log('merging data', connData)
         const startTime = performance.now();
         const dataMap = new Map(mergedData.map(city => [city.name, city]));
         const newData = connData.map((country) => {

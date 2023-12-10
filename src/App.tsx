@@ -1,4 +1,4 @@
-import react, { useState, useRef, useEffect } from 'react'
+import react, { useState, useRef } from 'react'
 import './App.css'
 import ServerDataComponent from './ServerDataComponent'
 import DataComponent from './DataComponent'
@@ -10,7 +10,7 @@ import useSocketData from './useSocketData'
 
 function App() {
   const { data } = useEndpointData()
-  const { connData, rowsToGenerate, setRowsToGenerate} = useSocketData()
+  const { connData, rowsToGenerate, setRowsToGenerate, intervalValue, setIntervalValue} = useSocketData()
   const [tableData, setTableData] = useState<City[]>([])
   const [mergedData, setMergedData] = useState<City[]>(data)
   const throttledDataRef = useRef<number>(3)
@@ -18,9 +18,22 @@ function App() {
 
   return (
     <div className=''>
-      <ServerDataComponent data={data} connData={connData} rowsToGenerate={rowsToGenerate} setRowsToGenerate={setRowsToGenerate}/>
+      <ServerDataComponent 
+        data={data} 
+        connData={connData} 
+        rowsToGenerate={rowsToGenerate} 
+        setRowsToGenerate={setRowsToGenerate} 
+        intervalValue={intervalValue} 
+        setIntervalValue={setIntervalValue}
+      />
       <br/>
-      <DataComponent data={data} connData={connData} mergedData={mergedData} setMergedData={setMergedData} throttledDataRef={throttledDataRef}/>
+      <DataComponent 
+        data={data} 
+        connData={connData} 
+        mergedData={mergedData} 
+        setMergedData={setMergedData} 
+        throttledDataRef={throttledDataRef}
+      />
       <br/>
       <Table data={throttledData}/>
     </div>
