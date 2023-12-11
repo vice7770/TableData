@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { City } from './makeData'
 import { useThrottle } from '@uidotdev/usehooks';
+import useGetCountries from './useGetCountries';
 
 interface Props {
     data: City[],
@@ -33,10 +34,10 @@ const BoxComponent = React.memo(({name, interval, mergeDataTime, data, throttled
 export default function DataComponent(props : Props) {
     const { data, connData, mergedData, setMergedData, throttledDataRef } = props;
     const [mergeDataTime, setMergeDataTime] = useState(0)
+    // const { data : countriesData } = useGetCountries();
 
     const throttledConnData = useThrottle(connData, 100);
 
-    //Merge server data with socket data
     useEffect(() => {
         if(!connData) return;
         const startTime = performance.now();
