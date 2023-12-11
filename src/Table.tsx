@@ -135,7 +135,7 @@ function Table(props : Props) {
     })
 
     return (
-        <div className="flex flex-col p-2">
+        <div className="flex p-2 content-center justify-center">
             <div className="h-2" />
             <table className="table-auto w-full text-left whitespace-no-wrap divide-y-2 divide-gray-200 border-2 border-gray-200 rounded-md">
                 <thead>

@@ -3,6 +3,14 @@ export const countries = [
     "London",
     "Paris",
     "Berlin",
+    "Madrid",
+    "Rome",
+    "Amsterdam",
+    "Vienna",
+    "Budapest",
+    "Prague",
+    "Warsaw",
+    "Athens",
 ];
 // export default countries;
 

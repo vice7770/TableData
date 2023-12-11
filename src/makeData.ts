@@ -33,10 +33,10 @@ const newWeatherForCity = (d : number): dayWeather => {
     }
 }
 
-export function makeRandomData(cities: string[], lens: number): City[] {
+export function makeRandomData(cities: string[], lens: number, totalRowsToGenerate: number): City[] {
     // Create a pool of possible values for `d`
     const citiesWeather = cities.map((city) => {
-        const dPool = range(100);
+        const dPool = range(totalRowsToGenerate);
         const cityName = city
 
         // Randomly select and remove `lens` values for `d` from the pool

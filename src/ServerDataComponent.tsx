@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { City } from './makeData'
 import { useDebounce, useThrottle } from "@uidotdev/usehooks";
 
@@ -6,14 +6,31 @@ interface Props {
     data: City[],
     connData: City[] | null,
     rowsToGenerate: number,
-    setRowsToGenerate: react.Dispatch<react.SetStateAction<number>>,
+    setRowsToGenerate: React.Dispatch<React.SetStateAction<number>>,
     intervalValue: number,
-    setIntervalValue: react.Dispatch<react.SetStateAction<number>>,
+    setIntervalValue: React.Dispatch<React.SetStateAction<number>>,
     totalRowsToGenerate: number,
-    setTotalRowsToGenerate: react.Dispatch<react.SetStateAction<number>>
+    setTotalRowsToGenerate: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function ServerDataComponent( props : Props) {
+const BoxComponent = React.memo(({name, interval, data}: {name: string, interval: number, data: any}) => {
+    const [backgroundColor, setBackgroundColor] = useState('')
+    useEffect(() => {
+        setBackgroundColor('red')
+        setTimeout(() => {
+            setBackgroundColor('')
+        }, interval)
+    }, [data])
+    return (
+        <div className='flex items-center justify-center border-2 border-red-100 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColor}}>
+            <h3 className='text-3xl'>
+                {name}
+            </h3>
+        </div>
+    )
+})
+
+function ServerDataComponent( props : Props) {
     const {
       data,
       connData,
@@ -24,30 +41,8 @@ export default function ServerDataComponent( props : Props) {
       totalRowsToGenerate,
       setTotalRowsToGenerate,
     } = props;
-    const [backgroundColor, setBackgroundColor] = useState('')
-    const [backgroundColorConn, setBackgroundColorConn] = useState('')
     const [rowsToGenerateInput, setRowsToGenerateInput] = useState(totalRowsToGenerate);
     const debouncedValue = useDebounce(rowsToGenerateInput, 300);
-    
-    useEffect(() => {
-        if (data) {
-            setBackgroundColor('red')
-            setTimeout(() => {
-                setBackgroundColor('')
-            }, 3000)
-        }
-    }, [data])
-
-    const throttledConnData = useThrottle(connData, 100);
-
-    useEffect(() => {
-        if (connData) {
-            setBackgroundColorConn('red')
-            setTimeout(() => {
-                setBackgroundColorConn('')
-            }, 1000)
-        }
-    }, [throttledConnData])
 
     useEffect(() => {
         setTotalRowsToGenerate(debouncedValue);
@@ -59,7 +54,7 @@ export default function ServerDataComponent( props : Props) {
                 <h1 className='text-5xl'>Server Data</h1>
             </div>
             <div className='flex flex-row gap-8'>
-            <div className='flex flex-col'>
+                <div className='flex flex-col'>
                     <label className='text-xl mb-2'>Number of Rows</label>
                     <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerateInput} onChange={(e) => setRowsToGenerateInput(parseInt(e.target.value))}/>
                 </div>
@@ -73,15 +68,13 @@ export default function ServerDataComponent( props : Props) {
                 </div>
             </div>
             <div className='flex items-center justify-center border-2 border-red-100 w-1/3 m-10 gap-3'>
-                <div className='flex items-center justify-center border-2 border-red-100 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColor}}>
-                    <h3 className='text-3xl'>
-                        Endpoint
-                    </h3>
-                </div>
-                <div className='flex items-center justify-center border-2 border-red-100 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColorConn}}>
-                    <h3 className='text-3xl'>Socket Conn</h3>
-                </div>
+                <BoxComponent name='Server' interval={3000} data={data}/>
+                <BoxComponent name='Socket' interval={1000} data={useThrottle(connData, 100)}/>
             </div>
         </div>
     )
 }
+
+const MemoizedServerDataComponent = React.memo(ServerDataComponent);
+
+export default MemoizedServerDataComponent;

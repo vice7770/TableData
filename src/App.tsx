@@ -10,7 +10,7 @@ import useSocketData from './useSocketData'
 
 function App() {
   const { data, totalRowsToGenerate, setTotalRowsToGenerate } = useEndpointData()
-  const { connData, rowsToGenerate, setRowsToGenerate, intervalValue, setIntervalValue} = useSocketData()
+  const { connData, rowsToGenerate, setRowsToGenerate, intervalValue, setIntervalValue} = useSocketData(totalRowsToGenerate)
   const [tableData, setTableData] = useState<City[]>([])
   const [mergedData, setMergedData] = useState<City[]>(data)
   const throttledDataRef = useRef<number>(3)
@@ -36,7 +36,7 @@ function App() {
       />
       <br/>
       <DataComponent 
-        data={data} 
+        data={data}
         connData={connData} 
         mergedData={mergedData} 
         setMergedData={setMergedData} 

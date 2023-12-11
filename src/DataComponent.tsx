@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { City } from './makeData'
 import { useThrottle } from '@uidotdev/usehooks';
 
@@ -6,25 +6,35 @@ interface Props {
     data: City[],
     connData: City[] | null,
     mergedData: City[],
-    setMergedData: react.Dispatch<react.SetStateAction<City[]>>,
-    throttledDataRef: react.MutableRefObject<number>
+    setMergedData: React.Dispatch<React.SetStateAction<City[]>>,
+    throttledDataRef: React.MutableRefObject<number>
 }
+
+const BoxComponent = React.memo(({name, interval, mergeDataTime, data, throttledConnData}: {name: string, interval: number, mergeDataTime: number, data: any, throttledConnData: any}) => {
+    const [backgroundColor, setBackgroundColor] = useState('')
+    useEffect(() => {
+        setBackgroundColor('red')
+        setTimeout(() => {
+            setBackgroundColor('')
+        }, interval)
+    }, [data,throttledConnData])
+    return (
+        <div className='flex items-center justify-center border-2 border-red-100 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColor}}>
+            <h3 className='text-3xl'>
+                {name}
+            </h3>
+            <span className='text-xl ml-4'>
+                {mergeDataTime.toFixed(5)} ms
+            </span>
+        </div>
+    )
+})
 
 export default function DataComponent(props : Props) {
     const { data, connData, mergedData, setMergedData, throttledDataRef } = props;
-    const [backgroundColor, setBackgroundColor] = useState('')
     const [mergeDataTime, setMergeDataTime] = useState(0)
 
     const throttledConnData = useThrottle(connData, 100);
-    
-    useEffect(() => {
-        if (data || throttledConnData) { 
-            setBackgroundColor('red')
-            setTimeout(() => {
-                setBackgroundColor('')
-            }, 1000)
-        }
-    }, [data,throttledConnData])
 
     //Merge server data with socket data
     useEffect(() => {
@@ -52,14 +62,7 @@ export default function DataComponent(props : Props) {
 
     return (
         <div className='flex flex-row items-center justify-center mb-2'>
-            <div className='flex items-center justify-center border-2 border-red-100 w-1/3 gap-3' style={{backgroundColor: backgroundColor}}>
-                <h3 className='text-2xl'>
-                    Data
-                </h3>
-                <span className='text-xl ml-4'>
-                    {mergeDataTime.toFixed(5)} ms
-                </span>
-            </div>
+            <BoxComponent name='Data' interval={1000} mergeDataTime={mergeDataTime} data={data} throttledConnData={throttledConnData}/>
             <label className='text-xl ml-4'>Throttle</label>
             <input type="number" name='throttle' className="ml-4 p-1 border-2 border-gray-300 rounded text-center" min="0" defaultValue={throttledDataRef.current} onChange={(e) => throttledDataRef.current = parseInt(e.target.value, 10)}/>
         </div>
