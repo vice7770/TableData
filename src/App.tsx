@@ -5,7 +5,7 @@ import DataComponent from './DataComponent'
 import Table from './Table'
 import { City } from './makeData'
 import useEndpointData from './useEndpointData'
-import { useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
+import { useThrottle, useWindowScroll, useWindowSize, useIsFirstRender } from '@uidotdev/usehooks'
 import useSocketData from './useSocketData'
 
 function App() {
@@ -18,7 +18,6 @@ function App() {
   const [{ x, y }, scrollTo] = useWindowScroll();
   const size = useWindowSize();
   const shouldShowButton = (y && y > (size.height || 0)/2) || (x && ((x < (size.width || 0)/2 - 100) || x > (size.width || 0)/2 + 100));
-  
   useEffect(() => {
     if (data) {
       setMergedData(data)
@@ -29,6 +28,12 @@ function App() {
     const width = size.width || 0;
     scrollTo({ left: width / 2, top: 0, behavior: "smooth" });
   };
+
+  useEffect(() => {
+    if(size.height && size.width) {
+      handleScroll()
+    }
+  }, [size])
 
   return (
     <div className='flex flex-col items-center justify-center w-fit'>
