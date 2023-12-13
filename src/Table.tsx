@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from "react";
 import { City, dayWeather } from "./makeData";
-import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext, Cell, Row } from "@tanstack/react-table";
 import './index.css'
 import { conditions } from "./const";
+import { useIntersectionObserver } from "@uidotdev/usehooks";
 
 interface Props {
     data: City[];
@@ -13,6 +14,39 @@ type WeatherData = {
   };
 
 const columnHelper = createColumnHelper<any>()
+
+// function Td({ cell }: { cell: Cell<WeatherData, unknown> }) {
+//     const [ref, entry] = useIntersectionObserver({
+//         threshold: 0,
+//         root: null,
+//         rootMargin: "0px",
+//     });
+//     // console.log('entry', entry?.isIntersecting, cell.column.id)
+//     return (
+//         <td key={cell.id} ref={ref}>
+//             {entry?.isIntersecting ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+//         </td>
+//     )
+// }
+
+function TR({ row }: { row: Row<WeatherData>, key: string }) {
+    const [ref, entry] = useIntersectionObserver({
+        threshold: 0,
+        root: null,
+        rootMargin: "500px",
+    });
+    return (
+        <tr key={row.id} ref={ref}>
+            {row.getVisibleCells().map(cell => {
+                return entry?.isIntersecting ? (
+                    <td key={cell.id} className="min-w-[70px]">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                ) : <td key={cell.id}/>;
+            })}
+        </tr>
+    )
+}
 
 function Table(props : Props) {
     const { data } = props;
@@ -133,7 +167,6 @@ function Table(props : Props) {
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
-
     return (
         <div className="flex p-2">
             <div className="h-2" />
@@ -156,13 +189,7 @@ function Table(props : Props) {
                 </thead>
                 <tbody className="text-sm font-normal">
                 {table.getRowModel().rows.map(row => (
-                    <tr key={row.id}>
-                    {row.getVisibleCells().map(cell => (
-                        <td key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                    ))}
-                    </tr>
+                    <TR row={row} key={row.id}/>
                 ))}
                 </tbody>
             </table>
