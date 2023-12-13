@@ -26,7 +26,7 @@ const range = (len: number) => {
 const newWeatherForCity = (d : number): dayWeather => {
     const currentDate = moment()
     return {
-        day: currentDate.add(d, 'days').format('D-MMM'),
+        day: currentDate.add(d, 'days').format('D-MMM-YY'),
         temp: faker.number.int(30),
         windSpeed: faker.number.int(20),
         humidity: faker.number.int(100),
