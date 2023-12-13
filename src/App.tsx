@@ -5,7 +5,7 @@ import DataComponent from './DataComponent'
 import Table from './Table'
 import { City } from './makeData'
 import useEndpointData from './useEndpointData'
-import { useThrottle } from '@uidotdev/usehooks'
+import { useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
 import useSocketData from './useSocketData'
 
 function App() {
@@ -15,15 +15,31 @@ function App() {
   const [mergedData, setMergedData] = useState<City[]>(data)
   const throttledDataRef = useRef<number>(3)
   const throttledData = useThrottle(mergedData, throttledDataRef.current * 1000)
-
+  const [{ x, y }, scrollTo] = useWindowScroll();
+  const size = useWindowSize();
+  const shouldShowButton = (y && y > (size.height || 0)/2) || (x && ((x < (size.width || 0)/2 - 100) || x > (size.width || 0)/2 + 100));
+  
   useEffect(() => {
     if (data) {
       setMergedData(data)
     }
   }, [data])
 
+  const handleScroll = () => {
+    const width = size.width || 0;
+    scrollTo({ left: width / 2, top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className=''>
+    <div className='flex flex-col items-center justify-center w-fit'>
+      {shouldShowButton && (
+        <button 
+          className="fixed right-20 top-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
+          onClick={handleScroll}
+        >
+          Bring me back!
+        </button>
+      )}
       <ServerDataComponent 
         data={data} 
         connData={connData} 
