@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo } from "react";
-import { City, dayWeather } from "./makeData";
-import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext, Cell, Row } from "@tanstack/react-table";
+import { City } from "./makeData";
+import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext, Cell, Row, HeaderGroup } from "@tanstack/react-table";
 import './index.css'
 import { conditions } from "./const";
 import { useHover, useIntersectionObserver } from "@uidotdev/usehooks";
-
-import { useVirtualizer } from '@tanstack/react-virtual'
+import useVirtualizedRowsTest from "./useVirtualizedRowsTest";
+import { useVirtualizer, useWindowVirtualizer } from "@tanstack/react-virtual";
+import { da } from "@faker-js/faker";
 
 interface Props {
     data: City[];
@@ -13,41 +14,68 @@ interface Props {
 
 type WeatherData = {
     [key: string]: string | number;
-  };
+};
 
 const columnHelper = createColumnHelper<any>()
 
-function Td({ cell }: { cell: Cell<WeatherData, unknown> , key : string}) {
-    const [ref, entry] = useIntersectionObserver({
-        threshold: 0,
-        root: null,
-        rootMargin: "300px",
-    });
-    // console.log('entry', entry?.isIntersecting, cell.column.id)
+// function Td({ cell }: { cell: Cell<WeatherData, unknown> , key : string}) {
+//     const [ref, entry] = useIntersectionObserver({
+//         threshold: 0,
+//         root: null,
+//         rootMargin: "300px",
+//     });
+//     // console.log('entry', entry?.isIntersecting, cell.column.id)
+//     return (
+//         <td key={cell.id} ref={ref} className="min-w-[70px]">
+//             {entry?.isIntersecting ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+//         </td>
+//     )
+// }
+
+function TRBody({ row }: { row: Row<WeatherData>}) {
+    // console.log('row', row)
     return (
-        <td key={cell.id} ref={ref} className="min-w-[70px]">
-            {entry?.isIntersecting ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
-        </td>
+        <tr key={row?.id}>
+            {row?.getVisibleCells().map(cell => {
+                return (
+                    <td key={cell.id} style={{minWidth: 90, maxHeight: 18}}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                )
+            })}
+        </tr>
     )
 }
 
-function TR({ row }: { row: Row<WeatherData>, key: string }) {
-    // const [ref, entry] = useIntersectionObserver({
-    //     threshold: 0,
-    //     root: null,
-    //     rootMargin: "500px",
-    // });
-    const [ref, hovering] = useHover();
+function DivHeader({ headerGroup, index }: { headerGroup: HeaderGroup<WeatherData>, index: number }) {
+    const width = index === 1 ? 90 : 90 * 3
     return (
-        <tr key={row.id} ref={ref}>
-            {row.getVisibleCells().map(cell => {
-                return hovering?.isIntersecting ? (
-                    <td key={cell.id} className="min-w-[70px]">
+        <div key={headerGroup?.id} className="flex border-b-2 border-gray-200 text-center">
+            {headerGroup?.headers.map((header) => (
+                <div key={header.id} className="px-4 py-2 text-sm font-semibold" style={{width: (header.index === 0 && index === 0) ? width + 90 : width, height: 25}}>
+                    {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                        )}
+                </div>
+            ))}
+        </div>
+    )
+}
+
+function DivRow({ row }: { row: Row<WeatherData>}) {
+    return (
+        <div key={row?.id} className="flex">
+            {row?.getVisibleCells().map(cell => {
+                return (
+                    <div key={cell.id} style={{minWidth: 90, minHeight: 25}} className="flex-none">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                ) : <td key={cell.id}/>;
+                    </div>
+                )
             })}
-        </tr>
+        </div>
     )
 }
 
@@ -171,78 +199,55 @@ function Table(props : Props) {
     })
 
     const { rows } = table.getRowModel()
+    const headers = table.getHeaderGroups()
 
-    const parentRef = React.useRef<HTMLDivElement>(null)
-
-    const virtualizer = useVirtualizer({
+    const parentRef = React.useRef<HTMLDivElement | null>(null)
+    
+    const virtualizer = useWindowVirtualizer({
         count: rows.length,
-        getScrollElement: () => parentRef.current,
-        estimateSize: () => 20,
-        overscan: 10,
+        estimateSize: () => 25,
+        overscan: 30,
+        scrollMargin: parentRef.current?.offsetTop ?? 0,
     })
 
-    //calculate max height and width of the table
-    // const hMax = useMemo(() => {
-    //     return rows.length * 18
-    // }, [rows.length])
-
-    // console.log('virtualizer', rows.length, virtualizer.getVirtualItems().length, hMax)
+    const headerCount = headers.map(header => header.headers.map(header => header.column))[1].length
 
     return (
-        <div className={`flex p-2`} ref={parentRef}>
-            <div className="h-2" style={{ height: `${virtualizer.getTotalSize()}px` }}/>
-            <table className="table-auto w-full text-left whitespace-no-wrap divide-y-2 divide-gray-200 border-2 border-gray-200 rounded-md" >
-                <thead>
-                {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id} className="border-b-2 border-gray-200 text-center">
-                    {headerGroup.headers.map(header => (
-                        <th key={header.id} colSpan={header.colSpan} className="px-4 py-2 text-sm font-semibold">
-                        {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                            )}
-                        </th>
+        <>
+            <div ref={parentRef} style={{ maxWidth: `${(headerCount * 90)}px`, border: '1px solid #c8c8c8' }}>
+                <div
+                    style={{
+                        height: `${virtualizer.getTotalSize()}px`,
+                        width: `${(headerCount * 90)}px`,
+                        position: 'relative',
+                    }}
+                >
+                    {virtualizer.getVirtualItems().map((item) => (
+                        <div
+                            key={item.key}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                height: `${item.size}px`,
+                                transform: `translateY(${
+                                item.start - virtualizer.options.scrollMargin
+                                }px)`,
+                            }}
+                        >
+                            {
+                                item.index < 2 ? 
+                                <DivHeader headerGroup={headers[item.index]} index={item.index}/>
+                                :
+                                <DivRow row={rows[item.index]}/>
+                            }
+                            
+                        </div>
                     ))}
-                    </tr>
-                ))}
-                </thead>
-                <tbody className="text-sm font-normal">
-                {virtualizer.getVirtualItems().map((virtualRow, index) => {
-                    const row = rows[virtualRow.index]
-                    return (
 
-                      <tr
-                        key={row.id}
-                        style={{
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${
-                            virtualRow.start - index * virtualRow.size
-                          }px)`,
-                        }}
-                      >
-                        {row.getVisibleCells().map((cell) => {
-                          return (
-                            <td key={cell.id} className="min-w-[70px]">
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
-                            </td>
-                          )
-                        })}
-                        {/* {
-                            row.getVisibleCells().map((cell) => {
-                                return <Td cell={cell} key={cell.id} />
-                            })
-                        } */}
-                      </tr>
-                    )
-                  })}
-                </tbody>
-            </table>
-        </div>
+                </div>
+            </div>
+        </>
     )
 }
 

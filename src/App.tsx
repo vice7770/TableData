@@ -37,9 +37,9 @@ function App() {
 
   return (
     <div className='flex flex-col items-center justify-center w-fit'>
-      {shouldShowButton && (
+      {!!shouldShowButton && (
         <button 
-          className="fixed right-20 top-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
+          className="fixed right-20 top-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded z-10" 
           onClick={handleScroll}
         >
           Bring me back!
@@ -65,7 +65,12 @@ function App() {
       />
       <br/>
       <Table data={throttledData}/>
+      {/* <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
+        Coordinates <span className="x">x: {x}</span>{" "}
+        <span className="y">y: {y}</span>{" "}
+      </aside> */}
     </div>
+
   )
 }
 
