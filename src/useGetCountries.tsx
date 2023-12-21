@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 
-function useFetch() {
+function useFetch(url) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const url = 'https://wft-geo-db.p.rapidapi.com/v1/geo/countries';
   
     useEffect(() => {
         const abortController = new AbortController();
@@ -15,8 +14,8 @@ function useFetch() {
                     { 
                         method: 'GET',
                         headers: {
-                            'X-RapidAPI-Key': 'cd969b94f8msh4723041a9be570cp1f612bjsn282973c1014c',
-                            'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
+                            'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+                            'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST
                         },
                         signal: abortController.signal
                     }
