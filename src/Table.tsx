@@ -52,7 +52,7 @@ function DivHeader({ headerGroup, index }: { headerGroup: HeaderGroup<WeatherDat
     return (
         <div key={headerGroup?.id} className="flex border-b-2 border-gray-200 text-center">
             {headerGroup?.headers.map((header) => (
-                <div key={header.id} className="px-4 py-2 text-sm font-semibold" style={{width: (header.index === 0 && index === 0) ? width + 90 : width, height: 25}}>
+                <div key={header.id} className="py-1 text-sm font-semibold" style={{width: (header.index === 0 && index === 0) ? width + 90 : width, height: 25}}>
                     {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -214,7 +214,7 @@ function Table(props : Props) {
 
     return (
         <>
-            <div ref={parentRef} style={{ maxWidth: `${(headerCount * 90)}px`, border: '1px solid #c8c8c8' }}>
+            <div ref={parentRef} style={{ maxWidth: `${(headerCount * 90)}px`, border: '1px solid #c8c8c8', padding: '1px' }}>
                 <div
                     style={{
                         height: `${virtualizer.getTotalSize()}px`,
