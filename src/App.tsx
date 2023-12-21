@@ -5,7 +5,7 @@ import DataComponent from './DataComponent'
 import Table from './Table'
 import { City } from './makeData'
 import useEndpointData from './useEndpointData'
-import { useThrottle, useWindowScroll, useWindowSize, useIsFirstRender } from '@uidotdev/usehooks'
+import { useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
 import useSocketData from './useSocketData'
 
 function App() {
@@ -65,10 +65,10 @@ function App() {
       />
       <br/>
       <Table data={throttledData}/>
-      {/* <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
+      <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
         Coordinates <span className="x">x: {x}</span>{" "}
         <span className="y">y: {y}</span>{" "}
-      </aside> */}
+      </aside>
     </div>
 
   )
