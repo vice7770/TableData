@@ -24,7 +24,7 @@ const BoxComponent = React.memo(({name, interval, data}: {name: string, interval
         }, interval)
     }, [data])
     return (
-        <div className='flex items-center justify-center border-2 border-red-100 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColor}}>
+        <div className='flex items-center justify-center border-2 border-gray-300 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColor}}>
             <h3 className='text-3xl'>
                 {name}
             </h3>
@@ -53,7 +53,7 @@ const DataList = (props: DataListProps) => {
     return (
         <div className="flex flex-col items-center justify-center">
             <label className='text-xl mb-2'>Countries List</label>
-            <div className="dropdown border border-gray-300 rounded p-2 max-h-48 overflow-y-auto">
+            <div className="dropdown border-2 border-gray-300 rounded p-2 max-h-48 overflow-y-auto">
                 {options.map((option, index) => (
                     <div
                         key={index}
@@ -117,7 +117,7 @@ function ServerDataComponent( props : Props ) {
                     <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={intervalValue} onChange={(e) => setIntervalValue(parseInt(e.target.value))}/>
                 </div>
             </div>
-            <div className='flex items-center justify-center border-2 border-red-100 w-1/3 mt-10 gap-3'>
+            <div className='flex items-center justify-center border-2 border-gray-300 w-1/3 mt-10 gap-3'>
                 <BoxComponent name='Server' interval={3000} data={data}/>
                 <BoxComponent name='Socket' interval={1000} data={useThrottle(connData, 100)}/>
             </div>
