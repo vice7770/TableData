@@ -1,18 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeData } from "./makeData";
-import {countries} from "./const";
-
-// interface Props {
-//     rowsToGenerateRef?: number
-// }
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 function useEndpointData() {
     const [totalRowsToGenerate, setTotalRowsToGenerate] = useState<number>(100);
-    const [data, setData] = useState(() => makeData(countries, totalRowsToGenerate))
+    const [selectedCapitals] = useLocalStorage<string[]>("selectedCapitals", []);
+    const [data, setData] = useState(() => makeData(selectedCapitals, totalRowsToGenerate));
     useEffect(() => {
-        const newData = makeData(countries, totalRowsToGenerate)
+        const newData = makeData(selectedCapitals, totalRowsToGenerate)
         setData(newData)
-    },[totalRowsToGenerate])
+    },[totalRowsToGenerate, selectedCapitals.length])
     return {data, totalRowsToGenerate, setTotalRowsToGenerate};
 }
 

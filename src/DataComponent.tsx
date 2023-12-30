@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { City } from './makeData'
 import { useThrottle } from '@uidotdev/usehooks';
-import useGetCountries from './useGetCountries';
-
 interface Props {
     data: City[],
     connData: City[] | null,
@@ -21,10 +19,10 @@ const BoxComponent = React.memo(({name, interval, mergeDataTime, data, throttled
     }, [data,throttledConnData])
     return (
         <div className='flex items-center justify-center border-2 border-red-100 m-2 h-full w-full text-3xl' style={{backgroundColor: backgroundColor}}>
-            <h3 className='text-3xl'>
+            <h3 className='text-3xl m-2'>
                 {name}
             </h3>
-            <span className='text-xl ml-4'>
+            <span className='text-xl m-2'>
                 {mergeDataTime.toFixed(5)} ms
             </span>
         </div>
@@ -34,7 +32,6 @@ const BoxComponent = React.memo(({name, interval, mergeDataTime, data, throttled
 export default function DataComponent(props : Props) {
     const { data, connData, mergedData, setMergedData, throttledDataRef } = props;
     const [mergeDataTime, setMergeDataTime] = useState(0)
-    // const { data : countriesData } = useGetCountries();
 
     const throttledConnData = useThrottle(connData, 100);
 
@@ -59,7 +56,7 @@ export default function DataComponent(props : Props) {
         const endTime = performance.now();
         const time = endTime - startTime;
         setMergeDataTime(time);
-    }, [connData])
+    }, [connData, data])
 
     return (
         <div className='flex flex-row items-center justify-center mb-2'>

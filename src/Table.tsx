@@ -3,13 +3,14 @@ import { City } from "./makeData";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext, Cell, Row, HeaderGroup } from "@tanstack/react-table";
 import './index.css'
 import { conditions } from "./const";
-import { useHover, useIntersectionObserver } from "@uidotdev/usehooks";
+import { useHover, useIntersectionObserver, useLocalStorage } from "@uidotdev/usehooks";
 import useVirtualizedRowsTest from "./useVirtualizedRowsTest";
 import { useVirtualizer, useWindowVirtualizer } from "@tanstack/react-virtual";
 import { da } from "@faker-js/faker";
 
 interface Props {
     data: City[];
+    selectedCapitals: string[];
 }
 
 type WeatherData = {
@@ -80,9 +81,12 @@ function DivRow({ row }: { row: Row<WeatherData>}) {
 }
 
 function Table(props : Props) {
-    const { data } = props;
+    const { data,selectedCapitals } = props;
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
+        if (!data) {
+            return result;
+        }
         data.forEach((city, index) => {
             city.weather.forEach((dayWeather, dayIndex) => {
                 const dayWeather_: WeatherData = {
@@ -190,7 +194,7 @@ function Table(props : Props) {
                 )
             }
         })
-    }, []);
+    }, [selectedCapitals]);
 
     const table = useReactTable({
         data: formattedData,
@@ -210,7 +214,7 @@ function Table(props : Props) {
         scrollMargin: parentRef.current?.offsetTop ?? 0,
     })
 
-    const headerCount = headers.map(header => header.headers.map(header => header.column))[1].length
+    const headerCount = headers?.map(header => header.headers.map(header => header.column))[1]?.length
 
     return (
         <>

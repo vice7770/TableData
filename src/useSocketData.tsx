@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { makeRandomData } from "./makeData";
 import { City } from "./makeData";
-import {countries} from "./const";
+import { useLocalStorage } from "@uidotdev/usehooks";
+// import {countries} from "./const";
 
 function useSocketData( totalRowsToGenerate : number) {
     const [connData, setConnData] = useState<City[] | null>(null);
     const [intervalValue, setIntervalValue] = useState<number>(1000);
-    // const [numberOfDataPoints, setNumberOfDataPoints] = useState<number>(10);
     const [rowsToGenerate, setRowsToGenerate] = useState<number>(10);
-
+    const [selectedCapitals] = useLocalStorage<string[]>("selectedCapitals", []);
     useEffect(() => {
+        if(selectedCapitals.length === 0) return;
         const intervalId = setInterval(() => {
-            const data = makeRandomData(countries, rowsToGenerate, totalRowsToGenerate);
+            const data = makeRandomData(selectedCapitals, rowsToGenerate, totalRowsToGenerate);
             setConnData(data);
         }, intervalValue);
 
         return () => {
             clearInterval(intervalId);
         };
-    }, [intervalValue, rowsToGenerate, totalRowsToGenerate]);
+    }, [intervalValue, rowsToGenerate, totalRowsToGenerate, selectedCapitals]);
 
     return { connData, intervalValue, setIntervalValue, rowsToGenerate, setRowsToGenerate};
 }
