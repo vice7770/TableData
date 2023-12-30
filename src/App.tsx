@@ -68,7 +68,7 @@ function App() {
       />
       <br/>
 
-      {mergedData?.length > 0  ? <Table data={throttledData} selectedCapitals={selectedCapitals} /> : <p className='text-5xl'> Please Select a country </p>}
+      {mergedData?.length > 0  ? <Table data={throttledData} /> : <p className='text-5xl'> Please Select a country </p>}
       <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
         Coordinates <span className="x">x: {x}</span>{" "}
         <span className="y">y: {y}</span>{" "}

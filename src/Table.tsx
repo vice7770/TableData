@@ -10,7 +10,6 @@ import { da } from "@faker-js/faker";
 
 interface Props {
     data: City[];
-    selectedCapitals: string[];
 }
 
 type WeatherData = {
@@ -81,7 +80,7 @@ function DivRow({ row }: { row: Row<WeatherData>}) {
 }
 
 function Table(props : Props) {
-    const { data,selectedCapitals } = props;
+    const { data } = props;
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
         if (!data) {
@@ -194,7 +193,7 @@ function Table(props : Props) {
                 )
             }
         })
-    }, [selectedCapitals]);
+    }, [data.length]);
 
     const table = useReactTable({
         data: formattedData,
