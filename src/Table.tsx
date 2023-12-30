@@ -10,6 +10,7 @@ import { da } from "@faker-js/faker";
 
 interface Props {
     data: City[];
+    setTableSize: React.Dispatch<React.SetStateAction<{ width: number; height: number; }>>;
 }
 
 type WeatherData = {
@@ -80,7 +81,7 @@ function DivRow({ row }: { row: Row<WeatherData>}) {
 }
 
 function Table(props : Props) {
-    const { data } = props;
+    const { data, setTableSize } = props;
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
         if (!data) {
@@ -212,6 +213,12 @@ function Table(props : Props) {
         overscan: 30,
         scrollMargin: parentRef.current?.offsetTop ?? 0,
     })
+    useEffect(() => {
+        if (parentRef.current) {
+          const { width, height } = parentRef.current.getBoundingClientRect();
+          setTableSize({ width, height });
+        }
+      }, [columns.length]);
 
     const headerCount = headers?.map(header => header.headers.map(header => header.column))[1]?.length
 
