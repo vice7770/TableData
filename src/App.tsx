@@ -21,29 +21,39 @@ function App() {
 
   const shouldShowButton = (y && y > (size.height || 0)/2) || (x && ((x < (size.width || 0)/2 - 100) || x > (size.width || 0)/2 + 100));
   const className = 'flex flex-col items-center justify-center ' + (tableSize.width >= (size.width || 0) ? 'w-fit' : '');
+  const { scrollWidth, clientWidth } = document.documentElement;
+  const halfMaxX = (scrollWidth - clientWidth) / 2;
   useEffect(() => {
     if (data) {
       setMergedData(data)
     }
   }, [data])
 
-  const handleScroll = () => {
-    const width = size.width || 0;
-    scrollTo({ left: width / 2, top: 0, behavior: "smooth" });
+  const handleScrollSmooth = () => {
+    scrollTo({
+      left: halfMaxX,
+      top: 0,
+      behavior:"smooth"
+    });
   };
 
-  useEffect(() => {
-    if(size.height && size.width) {
-      handleScroll()
-    }
-  }, [size])
+  // const handleScroll = () => {
+  //   scrollTo({
+  //     left: halfMaxX,
+  //     top: 0,
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   handleScroll()
+  // }, [tableSize])
 
   return (
     <div className={className}>
       {!!shouldShowButton && (
         <button 
           className="fixed right-20 top-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded z-10" 
-          onClick={handleScroll}
+          onClick={handleScrollSmooth}
         >
           Bring me back!
         </button>

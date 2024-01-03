@@ -3,10 +3,8 @@ import { City } from "./makeData";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext, Cell, Row, HeaderGroup } from "@tanstack/react-table";
 import './index.css'
 import { conditions } from "./const";
-import { useHover, useIntersectionObserver, useLocalStorage } from "@uidotdev/usehooks";
-import useVirtualizedRowsTest from "./useVirtualizedRowsTest";
-import { useVirtualizer, useWindowVirtualizer } from "@tanstack/react-virtual";
-import { da } from "@faker-js/faker";
+import { useMeasure } from "@uidotdev/usehooks";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
 interface Props {
     data: City[];
@@ -82,6 +80,7 @@ function DivRow({ row }: { row: Row<WeatherData>}) {
 
 function Table(props : Props) {
     const { data, setTableSize } = props;
+    const [tableRef, { width }] = useMeasure();
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
         if (!data) {
@@ -202,6 +201,10 @@ function Table(props : Props) {
         getCoreRowModel: getCoreRowModel(),
     })
 
+    useEffect(() => {
+        setTableSize({ width: width || 0  , height: 0 });
+    }, [width]);
+
     const { rows } = table.getRowModel()
     const headers = table.getHeaderGroups()
 
@@ -213,12 +216,6 @@ function Table(props : Props) {
         overscan: 30,
         scrollMargin: parentRef.current?.offsetTop ?? 0,
     })
-    useEffect(() => {
-        if (parentRef.current) {
-          const { width, height } = parentRef.current.getBoundingClientRect();
-          setTableSize({ width, height });
-        }
-      }, [columns.length]);
 
     const headerCount = headers?.map(header => header.headers.map(header => header.column))[1]?.length
 
@@ -226,6 +223,7 @@ function Table(props : Props) {
         <>
             <div ref={parentRef} style={{ maxWidth: `${(headerCount * 90)}px`, border: '1px solid #c8c8c8', padding: '1px' }}>
                 <div
+                    ref={tableRef}
                     style={{
                         height: `${virtualizer.getTotalSize()}px`,
                         width: `${(headerCount * 90)}px`,
