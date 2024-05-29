@@ -1,19 +1,28 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { City } from "./makeData";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext, Cell, Row, HeaderGroup } from "@tanstack/react-table";
 import './index.css'
 import { conditions } from "./const";
 import { useMeasure } from "@uidotdev/usehooks";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
+// import { MyHookContext } from "./App";
 
 interface Props {
     data: City[];
     setTableSize: React.Dispatch<React.SetStateAction<{ width: number; height: number; }>>;
+    isMouseDown: boolean;
 }
 
 type WeatherData = {
     [key: string]: string | number;
 };
+
+interface SelectedRange {
+    startRow: number | null;
+    endRow: number | null;
+    startCol: string | null;
+    endCol: string | null;
+}
 
 const columnHelper = createColumnHelper<any>()
 
@@ -79,8 +88,41 @@ function DivRow({ row }: { row: Row<WeatherData>}) {
 }
 
 function Table(props : Props) {
-    const { data, setTableSize } = props;
+    const { data, setTableSize, isMouseDown } = props;
     const [tableRef, { width }] = useMeasure();
+    const [cellSelected, setCellSelected] = useState<Cell<any,any> | null>(null);
+    const [currentHoveredCell, setCurrentHoveredCell] = useState<Cell<any,any> | null>(null);
+    const [selectedRange, setSelectedRange] = useState<SelectedRange>({
+        startRow: null,
+        endRow: null,
+        startCol: null,
+        endCol: null,
+    });
+    // const {isMouseDown} = useContext(MyHookContext);
+    const [columnsId, setColumnsId] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (isMouseDown) {
+            if(!currentHoveredCell || !currentHoveredCell.row || !currentHoveredCell.column) {
+                return;
+            }
+            if(selectedRange.startRow && selectedRange.startCol && cellSelected?.row && selectedRange.startCol && cellSelected?.column){
+                const startRow = currentHoveredCell.row.index < cellSelected.row.index ? currentHoveredCell.row.index : cellSelected.row.index;
+                const endRow = currentHoveredCell.row.index > cellSelected.row.index ? currentHoveredCell.row.index : cellSelected.row.index;
+                const startColumnIndex = columnsId.indexOf(cellSelected?.column.id);
+                const endColumnIndex = columnsId.indexOf(currentHoveredCell.column.id);
+                const startColIndex = startColumnIndex < endColumnIndex ? cellSelected.column.id : currentHoveredCell.column.id;
+                const endColIndex = startColumnIndex < endColumnIndex ? currentHoveredCell.column.id : cellSelected.column.id;
+                setSelectedRange({
+                    startRow,
+                    endRow,
+                    startCol: startColIndex,
+                    endCol: endColIndex,
+                })
+            } 
+        }
+    }, [isMouseDown, currentHoveredCell])
+
     const formattedData = useMemo(() => {
         const result: WeatherData[] = [];
         if (!data) {
@@ -103,7 +145,7 @@ function Table(props : Props) {
         });
         return result;
     }, [data]);
-    
+
     const cellFormatter = (info : CellContext<any, any>) => {
         const getBackgroundColor = (columnId: string, value: number) => {
             if (columnId.includes('humidity')) {
@@ -126,10 +168,68 @@ function Table(props : Props) {
                 }
             }
         }
+
+        const handleMouseDown = () => {
+            setCurrentHoveredCell(info.cell);
+            setCellSelected(info.cell);
+            setSelectedRange(
+                {
+                    startRow: info.row.index,
+                    endRow: info.row.index,
+                    startCol: info.column.id,
+                    endCol: info.column.id,
+                }
+            )
+        };
+
+        const handleMouseEnter = () => {
+            if(isMouseDown) {
+                setCurrentHoveredCell(info.cell);
+            }
+        }
+
+        // const handleClick = () => { 
+        //     setCellSelected(info.cell.id);
+        //     setSelectedRange(
+        //         {
+        //             startRow: info.row.index,
+        //             endRow: info.row.index,
+        //             startCol: info.column.id,
+        //             endCol: info.column.id,
+        //         }
+        //     )
+        // }
         const className = getBackgroundColor(info.column.id, info.getValue())
+        const border = cellSelected?.id === info.cell.id ? 'border-2 border-yellow-500' : '';
+        // const borderSelectedTop = (selectedRange && selectedRange.startRow && selectedRange.startRow > info.row.index )? ' border-t-1 border-yellow-500' : '';
+        // const borderSelectedLeft =
+        //   cellSelected?.id !== info.cell.id &&
+        //   selectedRange &&
+        //   selectedRange.startCol &&
+        //   selectedRange?.startRow &&
+        //   selectedRange?.endRow &&
+        //   selectedRange.startCol === info.column.id &&
+        //   selectedRange?.startRow <= info.row.index &&
+        //   selectedRange?.endRow >= info.row.index
+        //     ? " border-l-2 border-red-500"
+        //     : "";
+        
+        const bgIsSelected =
+          (selectedRange.startRow &&
+          selectedRange.endRow &&
+          selectedRange.startRow <= info.row.index &&
+          selectedRange.endRow >= info.row.index) &&
+          (selectedRange.startCol &&
+          selectedRange.endCol &&
+          columnsId.indexOf(selectedRange.startCol) <=
+          columnsId.indexOf(info.column.id) &&
+          columnsId.indexOf(selectedRange.endCol) >=
+          columnsId.indexOf(info.column.id)) 
+
         return (
-            <div className={className + " text-white text-center"}>
-                <span>{info.getValue()}</span>
+            <div className={className + " text-white text-center select-none relative " + border} onMouseEnter={handleMouseEnter} onMouseDown={handleMouseDown} >
+                {bgIsSelected && <div className="absolute inset-0 bg-slate-400 opacity-50"></div>}
+                <span style={{ pointerEvents: 'none' }}>{info.getValue()}</span>
             </div>
         )
     }
@@ -186,14 +286,33 @@ function Table(props : Props) {
                                 id: 'windSpeed_' + city.name,
                                 header: () => <span>WindSpeed</span>,
                                 cell: (info) => cellFormatter(info),
-                                
+
                             }),
                         ],
                     })
                 )
             }
         })
-    }, [data.length]);
+    // }, [data.length, cellSelected, selectedRange, isMouseDown]);
+    }, [data.length, cellSelected, selectedRange, isMouseDown]);
+
+    useEffect(() => {
+        const ids = columns.reduce((acc, column) => {
+            const ids = column.columns.map((col : any) => col.id);
+            return [...acc, ...ids];
+        }, []);
+    
+        // Set the state
+        setColumnsId(ids);
+    }, [columns.length]);
+
+    // const columnsId = useMemo(() => {
+    //     //go through the columns and get the id
+    //     return columns.reduce((acc, column) => {
+    //         const ids = column.columns.map((col : any) => col.id);
+    //         return [...acc, ...ids];
+    //     }, []);
+    // }, [columns.length])
 
     const table = useReactTable({
         data: formattedData,
@@ -209,7 +328,7 @@ function Table(props : Props) {
     const headers = table.getHeaderGroups()
 
     const parentRef = React.useRef<HTMLDivElement | null>(null)
-    
+
     const virtualizer = useWindowVirtualizer({
         count: rows.length,
         estimateSize: () => 25,
@@ -249,7 +368,7 @@ function Table(props : Props) {
                                 :
                                 <DivRow row={rows[item.index]}/>
                             }
-                            
+
                         </div>
                     ))}
 

@@ -1,4 +1,4 @@
-import react, { useState, useRef, useEffect } from 'react'
+import react, { useState, useRef, useEffect, createContext } from 'react'
 import './App.css'
 import ServerDataComponent from './ServerDataComponent'
 import DataComponent from './DataComponent'
@@ -7,6 +7,7 @@ import { City } from './makeData'
 import useEndpointData from './useEndpointData'
 import { useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
 import useSocketData from './useSocketData'
+import useMouse from './useMouse'
 
 function App() {
   const { data, totalRowsToGenerate, setTotalRowsToGenerate } = useEndpointData()
@@ -28,6 +29,8 @@ function App() {
       setMergedData(data)
     }
   }, [data])
+
+  const isMouseDown = useMouse();
 
   const handleScrollSmooth = () => {
     scrollTo({
@@ -69,6 +72,7 @@ function App() {
         setTotalRowsToGenerate={setTotalRowsToGenerate}
       />
       <br/>
+      
       <DataComponent 
         data={data}
         connData={connData} 
@@ -78,7 +82,7 @@ function App() {
       />
       <br/>
 
-      {throttledData?.length > 0  ? <Table data={throttledData} setTableSize={setTableSize} /> : <p className='text-5xl'> Please Select a country </p>}
+      {throttledData?.length > 0  ? <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown} /> : <p className='text-5xl'> Please Select a country </p>}
       <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
         Coordinates <span className="x">x: {x}</span>{" "}
         <span className="y">y: {y}</span>{" "}
