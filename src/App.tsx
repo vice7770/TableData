@@ -8,6 +8,7 @@ import useEndpointData from './useEndpointData'
 import { useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
 import useSocketData from './useSocketData'
 import useMouse from './useMouse'
+import LagRadar from 'react-lag-radar';
 
 function App() {
   const { data, totalRowsToGenerate, setTotalRowsToGenerate } = useEndpointData()
@@ -83,6 +84,14 @@ function App() {
       <br/>
 
       {throttledData?.length > 0  ? <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown} /> : <p className='text-5xl'> Please Select a country </p>}
+      <aside style={{ position: "fixed", top: 0, left: 0 }}>
+      <LagRadar
+        frames={20}
+        speed={0.0017}
+        size={200}
+        inset={3}
+      />
+      </aside>
       <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
         Coordinates <span className="x">x: {x}</span>{" "}
         <span className="y">y: {y}</span>{" "}
