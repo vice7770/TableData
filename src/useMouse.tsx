@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useThrottle } from '@uidotdev/usehooks'
 
 function useMouse() {
     const [isMouseDown, setIsMouseDown] = useState(false);
-
+    const throttledIsMouseDown = useThrottle(isMouseDown, 200)
     useEffect(() => {
         const handleMouseDown = () => {
             setIsMouseDown(true);
@@ -22,7 +23,8 @@ function useMouse() {
         };
     }, []); // Empty dependency array means this effect runs once on mount and clean up on unmount
 
-   return isMouseDown;
+   return throttledIsMouseDown;
+    // return isMouseDown;
 }
 
 export default useMouse;
