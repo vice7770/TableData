@@ -28,7 +28,7 @@ function App() {
     if (data) {
       setMergedData(data)
     }
-  }, [data, throttledData])
+  }, [data])
 
   const isMouseDown = useMouse();
 
