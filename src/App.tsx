@@ -5,7 +5,7 @@ import DataComponent from './DataComponent'
 import Table from './Table'
 import { City } from './makeData'
 import useEndpointData from './useEndpointData'
-import { useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
+import { useHover, useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
 import useSocketData from './useSocketData'
 import useMouse from './useMouse'
 
@@ -24,13 +24,17 @@ function App() {
   const className = 'flex flex-col items-center justify-center ' + (tableSize.width >= (size.width || 0) ? 'w-fit' : '');
   const { scrollWidth, clientWidth } = document.documentElement;
   const halfMaxX = (scrollWidth - clientWidth) / 2;
+
+  const [refHover, isHovering] = useHover();
+  const isMouseDown = useMouse({isHovering});
+
   useEffect(() => {
     if (data) {
       setMergedData(data)
     }
   }, [data])
 
-  const isMouseDown = useMouse();
+  
 
   const handleScrollSmooth = () => {
     scrollTo({
@@ -54,42 +58,47 @@ function App() {
   return (
     <div className={className}>
       {!!shouldShowButton && (
-        <button 
-          className="fixed right-20 top-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded z-10" 
+        <button
+          className="fixed right-20 top-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded z-10"
           onClick={handleScrollSmooth}
         >
           Bring me back!
         </button>
       )}
-      <ServerDataComponent 
-        data={data} 
-        connData={connData} 
-        rowsToGenerate={rowsToGenerate} 
-        setRowsToGenerate={setRowsToGenerate} 
-        intervalValue={intervalValue} 
+      <ServerDataComponent
+        data={data}
+        connData={connData}
+        rowsToGenerate={rowsToGenerate}
+        setRowsToGenerate={setRowsToGenerate}
+        intervalValue={intervalValue}
         setIntervalValue={setIntervalValue}
         totalRowsToGenerate={totalRowsToGenerate}
         setTotalRowsToGenerate={setTotalRowsToGenerate}
       />
-      <br/>
-      
+      <br />
+
       <DataComponent
         data={data}
-        connData={connData} 
-        mergedData={mergedData} 
-        setMergedData={setMergedData} 
+        connData={connData}
+        mergedData={mergedData}
+        setMergedData={setMergedData}
         throttledDataRef={throttledDataRef}
       />
-      <br/>
+      <br />
 
-      {throttledData?.length > 0  ? <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown} /> : <p className='text-5xl'> Please Select a country </p>}
+      {throttledData?.length > 0 ? (
+        <div ref={refHover}>
+          <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/>
+        </div>
+      ) : (
+        <p className="text-5xl"> Please Select a country </p>
+      )}
       <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
         Coordinates <span className="x">x: {x}</span>{" "}
         <span className="y">y: {y}</span>{" "}
       </aside>
     </div>
-
-  )
+  );
 }
 
 export default App

@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useThrottle } from '@uidotdev/usehooks'
 
-function useMouse() {
+function useMouse(props : { isHovering: boolean}) {
+    const { isHovering } = props;
     const [isMouseDown, setIsMouseDown] = useState(false);
-    const throttledIsMouseDown = useThrottle(isMouseDown, 200)
+    const throttledIsMouseDown = useThrottle(isMouseDown, 100)
     useEffect(() => {
         const handleMouseDown = () => {
-            setIsMouseDown(true);
+            if (isHovering) {
+                setIsMouseDown(true);
+            }
         };
 
         const handleMouseUp = () => {
-            setIsMouseDown(false);
+            if (isHovering) {
+                setIsMouseDown(false);
+            }
         };
 
         window.addEventListener('mousedown', handleMouseDown);
@@ -21,10 +26,9 @@ function useMouse() {
             window.removeEventListener('mousedown', handleMouseDown);
             window.removeEventListener('mouseup', handleMouseUp);
         };
-    }, []); // Empty dependency array means this effect runs once on mount and clean up on unmount
+    }, [isHovering]); // Add isHovering to the dependency array
 
    return throttledIsMouseDown;
-    // return isMouseDown;
 }
 
 export default useMouse;
