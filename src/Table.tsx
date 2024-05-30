@@ -6,6 +6,7 @@ import { conditions } from "./const";
 import { useMeasure } from "@uidotdev/usehooks";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 // import { MyHookContext } from "./App";
+import LagRadar from 'react-lag-radar';
 
 interface Props {
     data: City[];
@@ -374,8 +375,16 @@ function Table(props : Props) {
 
                 </div>
             </div>
+            <aside style={{ position: "fixed", top: 0, left: 0 }}>
+                <LagRadar
+                    frames={20}
+                    speed={0.0017}
+                    size={200}
+                    inset={3}
+                />
+            </aside>
         </>
     )
 }
 
-export default Table
+export default React.memo(Table)
