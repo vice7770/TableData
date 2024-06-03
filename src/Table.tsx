@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { City } from "./makeData";
 import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, ColumnDef, CellContext, Cell, Row, HeaderGroup } from "@tanstack/react-table";
 import './index.css'
@@ -102,6 +102,11 @@ function Table(props : Props) {
     // const {isMouseDown} = useContext(MyHookContext);
     const [columnsId, setColumnsId] = useState<string[]>([]);
 
+    const [isScrolling, setIsScrolling] = useState(false);
+
+    const prevFormattedData = useRef<WeatherData[] | null>(null);
+
+
     useEffect(() => {
         if (isMouseDown) {
             if(!currentHoveredCell || !currentHoveredCell.row || !currentHoveredCell.column) {
@@ -129,6 +134,9 @@ function Table(props : Props) {
         if (!data) {
             return result;
         }
+        if (isScrolling) {
+            return prevFormattedData.current;
+        }
         data.forEach((city, index) => {
             city.weather.forEach((dayWeather, dayIndex) => {
                 const dayWeather_: WeatherData = {
@@ -144,6 +152,7 @@ function Table(props : Props) {
                 }
             });
         });
+        prevFormattedData.current = result;
         return result;
     }, [data]);
 
@@ -338,6 +347,11 @@ function Table(props : Props) {
     })
 
     const headerCount = headers?.map(header => header.headers.map(header => header.column))[1]?.length
+
+    useEffect(() => {
+        console.log('virtualizer', virtualizer.isScrolling)
+        setIsScrolling(virtualizer.isScrolling)
+    }, [virtualizer.isScrolling])
 
     return (
         <>
