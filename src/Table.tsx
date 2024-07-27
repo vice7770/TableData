@@ -7,6 +7,7 @@ import { useMeasure } from "@uidotdev/usehooks";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 // import { MyHookContext } from "./App";
 import LagRadar from 'react-lag-radar';
+import { FpsView } from "react-fps";
 
 interface Props {
     data: City[];
@@ -396,6 +397,7 @@ function Table(props : Props) {
                     size={200}
                     inset={3}
                 />
+                <FpsView/>
             </aside>
         </>
     )

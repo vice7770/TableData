@@ -3,6 +3,7 @@ import { City } from './makeData'
 import { useDebounce, useLocalStorage, useThrottle } from "@uidotdev/usehooks";
 import useGetCountries from './useGetCountries';
 import { Country } from './useGetCountries';
+import DonutGraph from './DonutGraph';
 
 interface Props {
     data: City[],
@@ -96,32 +97,34 @@ function ServerDataComponent( props : Props ) {
     }, [debouncedValue]);
 
     return (
-        <div className='flex flex-col items-center justify-center'>
-            <div className='flex flex-col items-center mb-7'>
-                <h1 className='text-5xl mt-4'>Server Data</h1>
+        <>
+            <div className='flex flex-col items-center justify-center'>
+                <div className='flex flex-col items-center mb-7'>
+                    <h1 className='text-5xl mt-4'>Server Data</h1>
+                </div>
+                <div className='flex flex-row gap-8'>
+                    <div className='flex flex-col'>
+                        <DataList id="countries" options={countriesListRef.current} selectedCapitals={selectedCapitals} setSelectedCapitals={setSelectedCapitals}/>
+                    </div>
+                    <div className='flex flex-col'>
+                        <label className='text-xl mb-2'>Number of Rows</label>
+                        <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerateInput} onChange={(e) => setRowsToGenerateInput(parseInt(e.target.value))}/>
+                    </div>
+                    <div className='flex flex-col'>
+                        <label className='text-xl mb-2'>Number of Rows from Socket</label>
+                        <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerate} onChange={(e) => setRowsToGenerate(parseInt(e.target.value))}/>
+                    </div>
+                    <div className='flex flex-col'>
+                        <label className='text-xl mb-2'>Update Interval</label>
+                        <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={intervalValue} onChange={(e) => setIntervalValue(parseInt(e.target.value))}/>
+                    </div>
+                </div>
+                <div className='flex items-center justify-center border-2 border-gray-300 w-1/3 mt-10 gap-3'>
+                    <BoxComponent name='Server' interval={3000} data={data}/>
+                    <BoxComponent name='Socket' interval={1000} data={useThrottle(connData, 100)}/>
+                </div>
             </div>
-            <div className='flex flex-row gap-8'>
-                <div className='flex flex-col'>
-                    <DataList id="countries" options={countriesListRef.current} selectedCapitals={selectedCapitals} setSelectedCapitals={setSelectedCapitals}/>
-                </div>
-                <div className='flex flex-col'>
-                    <label className='text-xl mb-2'>Number of Rows</label>
-                    <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerateInput} onChange={(e) => setRowsToGenerateInput(parseInt(e.target.value))}/>
-                </div>
-                <div className='flex flex-col'>
-                    <label className='text-xl mb-2'>Number of Rows from Socket</label>
-                    <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={rowsToGenerate} onChange={(e) => setRowsToGenerate(parseInt(e.target.value))}/>
-                </div>
-                <div className='flex flex-col'>
-                    <label className='text-xl mb-2'>Update Interval</label>
-                    <input type="number" className="ml-4 p-1 border-2 border-gray-300 rounded text-center" defaultValue={intervalValue} onChange={(e) => setIntervalValue(parseInt(e.target.value))}/>
-                </div>
-            </div>
-            <div className='flex items-center justify-center border-2 border-gray-300 w-1/3 mt-10 gap-3'>
-                <BoxComponent name='Server' interval={3000} data={data}/>
-                <BoxComponent name='Socket' interval={1000} data={useThrottle(connData, 100)}/>
-            </div>
-        </div>
+        </>
     )
 }
 

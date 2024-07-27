@@ -20,7 +20,7 @@ export const conditions  = {
         hot: 25,
     },
     windSpeed: {
-        windy: 15,
+        windy: 18,
         calm: 5,
     },
     humidity: {

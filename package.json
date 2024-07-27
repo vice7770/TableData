@@ -13,9 +13,11 @@
     "@tanstack/react-table": "^8.10.7",
     "@tanstack/react-virtual": "^3.0.1",
     "@uidotdev/usehooks": "^2.4.1",
+    "d3": "^7.9.0",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-fps": "^1.0.6",
     "react-lag-radar": "^1.0.0"
   },
   "devDependencies": {

@@ -8,11 +8,20 @@ import useEndpointData from './useEndpointData'
 import { useHover, useThrottle, useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
 import useSocketData from './useSocketData'
 import useMouse from './useMouse'
+import DonutGraph from './DonutGraph'
+import { conditions } from './const'
+
+export interface DonutData {
+  label: string
+  value: number
+  color: string
+}
 
 function App() {
   const { data, totalRowsToGenerate, setTotalRowsToGenerate } = useEndpointData()
   const { connData, rowsToGenerate, setRowsToGenerate, intervalValue, setIntervalValue} = useSocketData(totalRowsToGenerate)
   const [mergedData, setMergedData] = useState<City[]>(data)
+  const [donutData, setDonutData] = useState<DonutData[]>([])
 
   const throttledDataRef = useRef<number>(3)
   const throttledData = useThrottle(mergedData, throttledDataRef.current * 1000)
@@ -28,12 +37,54 @@ function App() {
   const [refHover, isHovering] = useHover();
   const isMouseDown = useMouse({isHovering});
 
+  // const donutData = [
+  //   { label: 'A', value: 30 },
+  //   { label: 'B', value: 70 },
+  //   { label: 'C', value: 50 },
+  // ];
+
   useEffect(() => {
     if (data) {
       setMergedData(data)
     }
   }, [data])
 
+  useEffect(() => {
+    function processDonuData(data: City[]) {
+      const donutData : DonutData[] = [
+        {
+          label: "hot",
+          value: 0,
+          color: '#ff0000'
+        },
+        {
+          label: "humid",
+          value: 0,
+          color: '#0000ff'
+        },
+        {
+          label: "windy",
+          value: 0,
+          color: '#add8e6'
+        }            
+      ]
+      data.forEach((country) => {
+        country.weather.forEach((day) => {
+          if(day.temp >= conditions.temp.hot){
+            donutData[0].value += 1
+          }
+          if(day.humidity >= conditions.humidity.humid){
+            donutData[1].value += 1
+          }
+          if(day.windSpeed >= conditions.windSpeed.windy){
+            donutData[2].value += 1
+          }
+        })
+      })
+      return donutData;
+    }
+    setDonutData(processDonuData(throttledData))
+  },[throttledData])
   
 
   const handleScrollSmooth = () => {
@@ -76,7 +127,6 @@ function App() {
         setTotalRowsToGenerate={setTotalRowsToGenerate}
       />
       <br />
-
       <DataComponent
         data={data}
         connData={connData}
@@ -85,7 +135,7 @@ function App() {
         throttledDataRef={throttledDataRef}
       />
       <br />
-
+      <DonutGraph data={donutData} />
       {throttledData?.length > 0 ? (
         <div ref={refHover}>
           <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/>
