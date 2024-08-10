@@ -40,7 +40,7 @@ function App() {
   const [refHover, isHovering] = useHover();
   const isMouseDown = useMouse({isHovering});
 
-  const [tableSelected, setTableSelected] = useState('Tanstack Table')
+  const [tableSelected, setTableSelected] = useState('tanStackTable')
 
   // const donutData = [
   //   { label: 'A', value: 30 },
@@ -100,16 +100,16 @@ function App() {
   //   });
   // };
 
-  const getTableSelected = () => {
-    console.log(tableSelected)
-    if (tableSelected === 'tanStackTable') {
-      return (<div ref={refHover}><Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/></div>)
-    } else {
-      return (<div ref={refHover}><TableOneMillion/></div>)
+  const memoizedTableSelected = useMemo(() => {
+    const getTableSelected = () => {
+      if (tableSelected === 'tanStackTable') {
+        return (<div ref={refHover}><Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/></div>)
+      } else {
+        return (<div ref={refHover}><TableOneMillion/></div>)
+      }
     }
-  }
-
-  const memoizedTableSelected = useMemo(() => getTableSelected(), [tableSelected]);
+    return getTableSelected();
+  }, [tableSelected, refHover, throttledData, setTableSize, isMouseDown]);
 
   // const handleScroll = () => {
   //   scrollTo({

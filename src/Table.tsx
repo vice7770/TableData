@@ -337,6 +337,8 @@ function Table(props : Props) {
 
     const { rows } = table.getRowModel()
     const headers = table.getHeaderGroups()
+    const totalRows = rows.length;
+    const totalCells = columnsId.length * totalRows;
 
     const parentRef = React.useRef<HTMLDivElement | null>(null)
 
@@ -356,6 +358,9 @@ function Table(props : Props) {
 
     return (
         <>
+            <div className="flex justify-center">
+                <span className="text-center text-2xl font-semibold">Total Cells: {totalCells}</span>
+            </div>
             <div ref={parentRef} style={{ maxWidth: `${(headerCount * 90)}px`, border: '1px solid #c8c8c8', padding: '1px' }}>
                 <div
                     ref={tableRef}
@@ -390,6 +395,10 @@ function Table(props : Props) {
 
                 </div>
             </div>
+            <aside style={{ position: "fixed", top: 0, left: 0 }}>
+                <FpsView/>
+            </aside>
+
             {/* <aside style={{ position: "fixed", top: 0, left: 0 }}>
                 <LagRadar
                     frames={20}
