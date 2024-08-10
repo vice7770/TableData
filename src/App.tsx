@@ -28,7 +28,7 @@ function App() {
 
   const throttledDataRef = useRef<number>(3)
   const throttledData = useThrottle(mergedData, throttledDataRef.current * 1000)
-  const [{ x, y }, scrollTo] = useWindowScroll();
+  // const [{ x, y }, scrollTo] = useWindowScroll();
   const size = useWindowSize();
   const [tableSize, setTableSize] = useState({ width: 0, height: 0 });
 
@@ -103,9 +103,9 @@ function App() {
   const getTableSelected = () => {
     console.log(tableSelected)
     if (tableSelected === 'tanStackTable') {
-      return  <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/>
+      return (<div ref={refHover}><Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/></div>)
     } else {
-      return <TableOneMillion/>
+      return (<div ref={refHover}><TableOneMillion/></div>)
     }
   }
 
@@ -158,10 +158,10 @@ function App() {
       ) : (
         <p className="text-5xl"> Please Select a country </p>
       )}
-      <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
+      {/* <aside style={{ position: "fixed", bottom: 0, right: 0 }}>
         Coordinates <span className="x">x: {x}</span>{" "}
         <span className="y">y: {y}</span>{" "}
-      </aside>
+      </aside> */}
     </div>
   );
 }
