@@ -390,7 +390,7 @@ function Table(props : Props) {
 
                 </div>
             </div>
-            <aside style={{ position: "fixed", top: 0, left: 0 }}>
+            {/* <aside style={{ position: "fixed", top: 0, left: 0 }}>
                 <LagRadar
                     frames={20}
                     speed={0.0017}
@@ -398,7 +398,7 @@ function Table(props : Props) {
                     inset={3}
                 />
                 <FpsView/>
-            </aside>
+            </aside> */}
         </>
     )
 }

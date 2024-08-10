@@ -1,4 +1,4 @@
-import react, { useState, useRef, useEffect, createContext } from 'react'
+import react, { useState, useRef, useEffect, createContext, useMemo } from 'react'
 import './App.css'
 import ServerDataComponent from './ServerDataComponent'
 import DataComponent from './DataComponent'
@@ -10,6 +10,9 @@ import useSocketData from './useSocketData'
 import useMouse from './useMouse'
 import DonutGraph from './DonutGraph'
 import { conditions } from './const'
+// import { CustomTable } from "building-blocks"; // Importing from the package
+import ButtonsSelectTable from './ButtonsSelectTable'
+import TableOneMillion from './oneMillionTable/TableOneMillion'
 
 export interface DonutData {
   label: string
@@ -36,6 +39,8 @@ function App() {
 
   const [refHover, isHovering] = useHover();
   const isMouseDown = useMouse({isHovering});
+
+  const [tableSelected, setTableSelected] = useState('Tanstack Table')
 
   // const donutData = [
   //   { label: 'A', value: 30 },
@@ -95,6 +100,17 @@ function App() {
     });
   };
 
+  const getTableSelected = () => {
+    console.log(tableSelected)
+    if (tableSelected === 'tanStackTable') {
+      return  <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/>
+    } else {
+      return <TableOneMillion/>
+    }
+  }
+
+  const memoizedTableSelected = useMemo(() => getTableSelected(), [tableSelected]);
+
   // const handleScroll = () => {
   //   scrollTo({
   //     left: halfMaxX,
@@ -136,10 +152,9 @@ function App() {
       />
       <br />
       <DonutGraph data={donutData} />
+      <ButtonsSelectTable setTableSelected={setTableSelected}/>
       {throttledData?.length > 0 ? (
-        <div ref={refHover}>
-          <Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/>
-        </div>
+        memoizedTableSelected
       ) : (
         <p className="text-5xl"> Please Select a country </p>
       )}
