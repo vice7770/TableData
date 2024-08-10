@@ -32,10 +32,10 @@ function App() {
   const size = useWindowSize();
   const [tableSize, setTableSize] = useState({ width: 0, height: 0 });
 
-  const shouldShowButton = (y && y > (size.height || 0)/2) || (x && ((x < (size.width || 0)/2 - 100) || x > (size.width || 0)/2 + 100));
+  // const shouldShowButton = (y && y > (size.height || 0)/2) || (x && ((x < (size.width || 0)/2 - 100) || x > (size.width || 0)/2 + 100));
   const className = 'flex flex-col items-center justify-center ' + (tableSize.width >= (size.width || 0) ? 'w-fit' : '');
-  const { scrollWidth, clientWidth } = document.documentElement;
-  const halfMaxX = (scrollWidth - clientWidth) / 2;
+  // const { scrollWidth, clientWidth } = document.documentElement;
+  // const halfMaxX = (scrollWidth - clientWidth) / 2;
 
   const [refHover, isHovering] = useHover();
   const isMouseDown = useMouse({isHovering});
@@ -92,13 +92,13 @@ function App() {
   },[throttledData])
   
 
-  const handleScrollSmooth = () => {
-    scrollTo({
-      left: halfMaxX,
-      top: 0,
-      behavior:"smooth"
-    });
-  };
+  // const handleScrollSmooth = () => {
+  //   scrollTo({
+  //     left: halfMaxX,
+  //     top: 0,
+  //     behavior:"smooth"
+  //   });
+  // };
 
   const getTableSelected = () => {
     console.log(tableSelected)
@@ -124,14 +124,14 @@ function App() {
 
   return (
     <div className={className}>
-      {!!shouldShowButton && (
+      {/* {!!shouldShowButton && (
         <button
           className="fixed right-20 top-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded z-10"
           onClick={handleScrollSmooth}
         >
           Bring me back!
         </button>
-      )}
+      )} */}
       <ServerDataComponent
         data={data}
         connData={connData}
