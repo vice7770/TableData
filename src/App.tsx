@@ -12,7 +12,7 @@ import DonutGraph from './DonutGraph'
 import { conditions } from './const'
 // import { CustomTable } from "building-blocks"; // Importing from the package
 import ButtonsSelectTable from './ButtonsSelectTable'
-import TableOneMillion from './oneMillionTable/TableOneMillion'
+import {TableOneMillion} from './oneMillionTable/index'
 
 export interface DonutData {
   label: string
@@ -105,7 +105,7 @@ function App() {
       if (tableSelected === 'tanStackTable') {
         return (<div ref={refHover}><Table data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/></div>)
       } else {
-        return (<div ref={refHover}><TableOneMillion/></div>)
+        return (<div ref={refHover}><TableOneMillion data={throttledData} setTableSize={setTableSize} isMouseDown={isMouseDown}/></div>)
       }
     }
     return getTableSelected();
@@ -152,7 +152,7 @@ function App() {
       />
       <br />
       <DonutGraph data={donutData} />
-      <ButtonsSelectTable setTableSelected={setTableSelected}/>
+      {/* <ButtonsSelectTable setTableSelected={setTableSelected}/> */}
       {throttledData?.length > 0 ? (
         memoizedTableSelected
       ) : (
