@@ -90,7 +90,7 @@ function ServerDataComponent( props : Props ) {
             ?.filter((country: Country) => country.region === "Europe" && country.fifa)
             .map((country: Country) => `${country.capital[0]}(${country.fifa})`)
             .sort()
-        || []
+        || countries
     );
     useEffect(() => {
         setTotalRowsToGenerate(debouncedValue);
@@ -104,7 +104,7 @@ function ServerDataComponent( props : Props ) {
                 </div>
                 <div className='flex flex-row gap-8'>
                     <div className='flex flex-col'>
-                        <DataList id="countries" options={countriesListRef.current} selectedCapitals={selectedCapitals} setSelectedCapitals={setSelectedCapitals}/>
+                        <DataList id="countries" options={countriesListRef.current as string[]} selectedCapitals={selectedCapitals} setSelectedCapitals={setSelectedCapitals}/>
                     </div>
                     <div className='flex flex-col'>
                         <label className='text-xl mb-2'>Number of Rows</label>
