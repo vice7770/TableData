@@ -151,7 +151,7 @@ function App() {
         throttledDataRef={throttledDataRef}
       />
       <br />
-      <DonutGraph data={donutData} />
+      {throttledData?.length > 0 && <DonutGraph data={donutData} />}
       {/* <ButtonsSelectTable setTableSelected={setTableSelected}/> */}
       {throttledData?.length > 0 ? (
         memoizedTableSelected

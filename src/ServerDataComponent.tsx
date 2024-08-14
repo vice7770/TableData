@@ -3,8 +3,7 @@ import { City } from './makeData'
 import { useDebounce, useLocalStorage, useThrottle } from "@uidotdev/usehooks";
 import useGetCountries from './useGetCountries';
 import { Country } from './useGetCountries';
-import DonutGraph from './DonutGraph';
-
+import { defaultCoutries } from './const';  
 interface Props {
     data: City[],
     connData: City[] | null,
@@ -90,7 +89,7 @@ function ServerDataComponent( props : Props ) {
             ?.filter((country: Country) => country.region === "Europe" && country.fifa)
             .map((country: Country) => `${country.capital[0]}(${country.fifa})`)
             .sort()
-        || countries
+        || defaultCoutries
     );
     useEffect(() => {
         setTotalRowsToGenerate(debouncedValue);

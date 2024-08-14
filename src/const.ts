@@ -1,4 +1,4 @@
-export const countries = [
+export const defaultCoutries = [
     'Amsterdam(NED)', 'Andorra la Vella(AND)', 'Athens(GRE)', 'Belgrade(SRB)', 'Berlin(GER)',
     'Bern(SUI)', 'Bratislava(SVK)', 'Brussels(BEL)', 'Bucharest(ROU)', 'Budapest(HUN)',
     'Chișinău(MDA)', 'City of San Marino(SMR)', 'Copenhagen(DEN)', 'Dublin(IRL)', 'Gibraltar(GIB)',
